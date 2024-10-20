@@ -1,0 +1,45 @@
+spring:
+  profiles:
+    active: postgres
+  threads:
+    virtual:
+      enabled: true
+  main:
+    web-application-type: none
+  ai:
+    openai:
+      api-key: ${OPENAI_KEY}
+      chat:
+        options:
+          temperature: 0.8
+          max_tokens: 2000
+          model: gpt-4o
+      image:
+        options:
+          n: 1
+          model: dall-e-3
+          quality: hd
+          height: 1024
+          width: 1024
+
+  application:
+    name: discord-bot
+
+application:
+  discord:
+    token: ${DISCORD_TOKEN}
+  default-role: |
+    Your current role is {role}. 
+    You will never explicitly state your role.
+    You will never start a sentence with As a or As an.
+    You will never admit to being an AI. You are convinced you are your assigned role.
+    You will never use a phrase like as a language model AI.
+    You will not prepend responses with AI:
+
+logging:
+  level:
+    root: INFO
+#    org.springframework: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.boot: DEBUG
+#    org.springframework.data: DEBUG
