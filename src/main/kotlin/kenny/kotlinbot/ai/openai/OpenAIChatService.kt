@@ -2,6 +2,7 @@ package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatService
 import org.springframework.ai.chat.messages.Message
+import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
@@ -29,11 +30,12 @@ class OpenAIChatService(val chatOptions: OpenAiChatOptions,
             .createMessage(mapOf("role" to role))
     }
 
-    override fun chat(messages: List<Message>): String {
+    override fun chat(prompt: String, userName: String): String {
+        val messages = listOf(
+            UserMessage(prompt)
+        )
 
-        val prompt = Prompt(messages, chatOptions)
-
-        val response : ChatResponse? = chatModel.call(prompt)
+        val response : ChatResponse? = chatModel.call(Prompt(messages, chatOptions))
 
         return response?.result?.output?.content ?: "No response from OpenAI API."
     }
@@ -51,16 +53,30 @@ class OpenAIChatService(val chatOptions: OpenAiChatOptions,
             systemMessage(prompt)
         }
 
-        return "Role is now '%s'".format(prompt)
+        return "Role is now $prompt"
+    }
+
+    override fun forget(userName: String): String {
+//        if (chats.containsKey(userName)) {
+//            chats.remove(userName)
+//            return "Forget all chats for $userName"
+//        } else {
+//            return "I have no memory of $userName"
+//        }
+        TODO("Not yet implemented")
     }
 
     override fun temperature(temp: Double): String {
-        chatOptions.temperature = temp
-        return "Temperature set to $temp"
+        if (temp > 0 && temp <= 2.0) {
+            chatOptions.temperature = temp
+        }
+        return "Temperature set to ${chatOptions.temperature}"
     }
 
     override fun maxTokens(tokens: Int): String {
-        chatOptions.maxTokens = tokens
-        return "MaxTokens set to $tokens"
+        if (tokens in 1..4096) {
+            chatOptions.maxTokens = tokens
+        }
+        return "MaxTokens set to ${chatOptions.maxTokens}"
     }
 }

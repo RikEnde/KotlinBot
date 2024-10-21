@@ -1,9 +1,14 @@
 package kenny.kotlinbot.storage.postgres
 
-import kenny.kotlinbot.storage.StoredImageResult
 import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.StoredImageResult
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Service
 import java.io.InputStream
 
+@Profile("postgres")
+@Service
+//@Transactional
 class PostgresStorageService : StorageService {
     override fun store(url: String, userName: String, prompt: String, revisedPrompt: String) {
         TODO("Not yet implemented")
@@ -21,7 +26,7 @@ class PostgresStorageService : StorageService {
         TODO("Not yet implemented")
     }
 
-    override fun load(id: String): InputStream? {
+    override fun load(id: String): InputStream {
         TODO("Not yet implemented")
     }
 

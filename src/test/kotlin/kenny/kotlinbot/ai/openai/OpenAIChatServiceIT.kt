@@ -4,7 +4,6 @@ import kenny.kotlinbot.ai.ChatService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -21,11 +20,8 @@ class OpenAIChatServiceIT {
 
     @Test
     fun chat_sayHelloWorld() {
-        val messages = listOf(
-            UserMessage("Say: \"Hello World!\"")
-        )
-        val response = chatService.chat(messages)
-        println("Random role: $response")
+        val response = chatService.chat("Say: \"Hello World!\"", "Unit Test")
+        println("Response: $response")
 
         assertThat(response).containsIgnoringCase("Hello World")
     }

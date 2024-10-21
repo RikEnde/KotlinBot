@@ -18,7 +18,7 @@ interface StorageService {
 
     fun findByPrompt(unitTest: String, prompt: String): List<StoredImageResult>
 
-    fun load(id: String): InputStream?
+    fun load(id: String): InputStream
 
     fun update(id: String, discordUrl: String)
 

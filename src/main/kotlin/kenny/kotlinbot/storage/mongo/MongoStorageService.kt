@@ -1,9 +1,13 @@
 package kenny.kotlinbot.storage.mongo
 
-import kenny.kotlinbot.storage.StoredImageResult
 import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.StoredImageResult
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Service
 import java.io.InputStream
 
+@Profile("mongo")
+@Service
 class MongoStorageService : StorageService {
     override fun store(url: String, userName: String, prompt: String, revisedPrompt: String) {
         TODO("Not yet implemented")
@@ -21,7 +25,7 @@ class MongoStorageService : StorageService {
         TODO("Not yet implemented")
     }
 
-    override fun load(id: String): InputStream? {
+    override fun load(id: String): InputStream {
         TODO("Not yet implemented")
     }
 
