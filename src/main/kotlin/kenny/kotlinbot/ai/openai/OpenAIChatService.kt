@@ -1,6 +1,7 @@
 package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatService
+import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.ai.chat.model.ChatResponse
@@ -11,6 +12,7 @@ import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import java.util.concurrent.ConcurrentHashMap
 
 @Profile("openai")
 @Service
@@ -18,31 +20,32 @@ class OpenAIChatService(val chatOptions: OpenAiChatOptions,
                         val chatModel: OpenAiChatModel,
                         @Value("\${application.default-role}") val defaultRole: String) : ChatService {
     private var systemMessage: Message? = null
+    private val chats = ConcurrentHashMap<String, List<Message>>()
+
     init {
-        // Add your custom initialization statements here
         if (this.systemMessage == null) {
             systemMessage("ChatBot")
         }
     }
 
     private final fun systemMessage(role: String) {
-        this.systemMessage = SystemPromptTemplate(defaultRole)
-            .createMessage(mapOf("role" to role))
+        this.systemMessage = SystemPromptTemplate(defaultRole).createMessage(mapOf("role" to role))
     }
 
     override fun chat(prompt: String, userName: String): String {
-        val messages = listOf(
-            UserMessage(prompt)
-        )
+        val messages = chats.getOrPut(userName) { emptyList() } + UserMessage(prompt)
 
-        val response : ChatResponse? = chatModel.call(Prompt(messages, chatOptions))
+        val response : ChatResponse? = chatModel.call(Prompt(messages.plus(systemMessage), chatOptions))
+
+        response?.let {
+            chats[userName] = messages + AssistantMessage(it.result.output.content)
+        }
 
         return response?.result?.output?.content ?: "No response from OpenAI API."
     }
 
-    override fun randomRole(): String {
-        return chatModel.call("Choose a random role for an AI chatbot in one paragraph")
-    }
+    override fun randomRole(): String =
+        chatModel.call("Choose a random role for an AI chatbot in one paragraph")
 
     override fun role(role: String?): String {
         var prompt : String? = role
@@ -57,13 +60,12 @@ class OpenAIChatService(val chatOptions: OpenAiChatOptions,
     }
 
     override fun forget(userName: String): String {
-//        if (chats.containsKey(userName)) {
-//            chats.remove(userName)
-//            return "Forget all chats for $userName"
-//        } else {
-//            return "I have no memory of $userName"
-//        }
-        TODO("Not yet implemented")
+        if (chats.containsKey(userName)) {
+            chats.remove(userName)
+            return "Forget all chats for $userName"
+        } else {
+            return "I have no memory of $userName"
+        }
     }
 
     override fun temperature(temp: Double): String {

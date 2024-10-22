@@ -1,7 +1,5 @@
 package kenny.kotlinbot.ai
 
-import org.springframework.ai.chat.messages.Message
-
 interface ChatService {
     fun chat(prompt: String, userName: String): String
 
