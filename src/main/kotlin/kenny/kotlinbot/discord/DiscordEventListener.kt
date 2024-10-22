@@ -2,6 +2,7 @@ package kenny.kotlinbot.discord
 
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.ai.ImageService
+import kenny.kotlinbot.config.ApplicationProperties
 import kenny.kotlinbot.storage.StorageService
 import kenny.kotlinbot.storage.StoredImageResult
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
@@ -10,14 +11,27 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.utils.FileUpload
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.ai.retry.NonTransientAiException
 import org.springframework.stereotype.Component
 
 @Component
 class DiscordEventListener(
     val chatService: ChatService,
     val imageService: ImageService,
-    val storageService: StorageService
+    val storageService: StorageService,
+    val properties: ApplicationProperties
 ) : ListenerAdapter() {
+
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
+
+    fun send(message: String, action: (String) -> Unit) {
+        val parts = message.chunked(properties.discord.messageSize)
+        parts.forEach(action)
+    }
+
+    fun cap(message: String?): String? = message?.take(properties.discord.messageSize)
 
     /**
      * Determine if messages are meant for the bot. PMs are treated as prompts.
@@ -37,9 +51,17 @@ class DiscordEventListener(
 
         // Treat DMs as prompts
         if (!content.startsWith("/")) {
-            val userName: String = event.author.globalName.toString()
-            val reply: String = chatService.chat(content, userName)
-            event.channel.sendMessage(reply).queue()
+            try {
+                val userName: String = event.author.globalName.toString()
+                val reply: String = chatService.chat(content, userName)
+
+                send(reply) { part ->
+                    event.channel.sendMessage(part).queue()
+                }
+            } catch (e: Exception) {
+                logger.error("Error sending DM message: ${e.message}")
+                event.channel.sendMessage("Error: ${cap(e.message)}").queue()
+            }
         }
     }
 
@@ -53,7 +75,14 @@ class DiscordEventListener(
         val channel = event.channel
         event.deferReply().queue { interactionHook: InteractionHook ->
             val content: String = getCommandResponse(event, userName, channel)
-            interactionHook.sendMessage(content).queue()
+            try {
+                send(content) { part ->
+                    interactionHook.sendMessage(part).queue()
+                }
+            } catch (e: Exception) {
+                logger.error("Error sending slash command message: ${e.message}")
+                interactionHook.sendMessage("Error: ${cap(e.message)}").queue()
+            }
         }
         if (event.options.isNotEmpty()) {
             event.hook.sendMessage("${event.name} -> ${event.options.last().asString}").queue()
@@ -149,9 +178,13 @@ class DiscordEventListener(
      * @param channel the channel to send the image
      */
     fun image(prompt: String, userName: String, channel: MessageChannelUnion): String {
-        val imageData = imageService.image(prompt, userName)
-        channel.sendMessage(imageData.url).queue()
-        storageService.store(imageData.url, userName, prompt, imageData.revisedPrompt)
-        return imageData.revisedPrompt
+        try {
+            val imageData = imageService.image(prompt, userName)
+            channel.sendMessage(imageData.url).queue()
+            storageService.store(imageData.url, userName, prompt, imageData.revisedPrompt)
+            return imageData.revisedPrompt
+        } catch (e: NonTransientAiException) {
+            return "Error generating image: ${e.message}"
+        }
     }
 }

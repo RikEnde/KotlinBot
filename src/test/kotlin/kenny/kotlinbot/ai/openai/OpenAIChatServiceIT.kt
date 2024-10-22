@@ -1,18 +1,18 @@
 package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.assertj.core.api.Assertions.assertThat
+import kotlin.test.Test
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("openai")
+@ActiveProfiles("openai", "postgres")
 class OpenAIChatServiceIT {
 
     @Autowired
@@ -20,7 +20,7 @@ class OpenAIChatServiceIT {
 
     @Test
     fun chat_sayHelloWorld() {
-        val response = chatService.chat("Say: \"Hello World!\"", "Unit Test")
+        val response = chatService.chat("Say: 'Hello World!'", "Unit Test")
         println("Response: $response")
 
         assertThat(response).containsIgnoringCase("Hello World")
@@ -30,7 +30,7 @@ class OpenAIChatServiceIT {
     fun role_setRoleToLiteralString() {
         val role = "Assistant"
         val response = chatService.role(role)
-        assertEquals("Role is now 'Assistant'", response)
+        assertEquals("Role is now Assistant", response)
     }
 
     @Test

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: postgres
+    active: postgres,openai
   threads:
     virtual:
       enabled: true
@@ -28,6 +28,7 @@ spring:
 application:
   discord:
     token: ${DISCORD_TOKEN}
+    message-size: 2000
   default-role: |
     Your current role is {role}. 
     You will never explicitly state your role.

@@ -11,3 +11,4 @@ target/
 *.ipr
 
 .env
+pgdata/

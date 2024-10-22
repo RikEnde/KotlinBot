@@ -1,6 +1,7 @@
 package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatService
+import kenny.kotlinbot.config.ApplicationProperties
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.UserMessage
@@ -9,33 +10,38 @@ import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.ai.openai.OpenAiChatOptions
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 @Profile("openai")
 @Service
-class OpenAIChatService(val chatOptions: OpenAiChatOptions,
-                        val chatModel: OpenAiChatModel,
-                        @Value("\${application.default-role}") val defaultRole: String) : ChatService {
+class OpenAIChatService(
+    val chatOptions: OpenAiChatOptions,
+    val chatModel: OpenAiChatModel,
+    val properties: ApplicationProperties
+) : ChatService {
     private var systemMessage: Message? = null
     private val chats = ConcurrentHashMap<String, List<Message>>()
 
-    init {
+    fun userChats(userName: String) : List<Message> = chats.getOrPut(userName) { emptyList() }
+    fun systemMessage() : Message {
         if (this.systemMessage == null) {
-            systemMessage("ChatBot")
+           return systemMessage("ChatBot")
         }
+        return this.systemMessage!!
     }
 
-    private final fun systemMessage(role: String) {
-        this.systemMessage = SystemPromptTemplate(defaultRole).createMessage(mapOf("role" to role))
+    fun systemMessage(role: String): Message {
+        val message = SystemPromptTemplate(properties.defaultRole).createMessage(mapOf("role" to role))
+        this.systemMessage = message
+        return message
     }
 
     override fun chat(prompt: String, userName: String): String {
-        val messages = chats.getOrPut(userName) { emptyList() } + UserMessage(prompt)
+        val messages = userChats(userName) + UserMessage(prompt)
 
-        val response : ChatResponse? = chatModel.call(Prompt(messages.plus(systemMessage), chatOptions))
+        val response: ChatResponse? = chatModel.call(Prompt(messages.plus(systemMessage()), chatOptions))
 
         response?.let {
             chats[userName] = messages + AssistantMessage(it.result.output.content)
@@ -48,9 +54,9 @@ class OpenAIChatService(val chatOptions: OpenAiChatOptions,
         chatModel.call("Choose a random role for an AI chatbot in one paragraph")
 
     override fun role(role: String?): String {
-        var prompt : String? = role
+        var prompt: String? = role
         if (prompt.isNullOrBlank()) {
-            prompt =  randomRole()
+            prompt = randomRole()
         }
         if (prompt.isNotBlank()) {
             systemMessage(prompt)

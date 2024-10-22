@@ -12,7 +12,6 @@ import org.springframework.ai.autoconfigure.openai.OpenAiImageProperties
 import org.springframework.ai.image.ImageOptions
 import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.ai.openai.OpenAiImageOptions
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.ClientHttpRequestFactories
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings
 import org.springframework.boot.web.client.RestClientCustomizer
@@ -23,8 +22,6 @@ import java.time.Duration
 
 @Configuration
 class Config {
-    @Value("\${application.discord.token}")
-    var discordToken: String? = null
 
     @Bean
     fun commands(jda: JDA): CommandListUpdateAction {
@@ -56,8 +53,8 @@ class Config {
     }
 
     @Bean
-    fun jda(discordEventListener: DiscordEventListener): JDA {
-        return JDABuilder.createDefault(discordToken)
+    fun jda(discordEventListener: DiscordEventListener, properties: ApplicationProperties): JDA {
+        return JDABuilder.createDefault(properties.discord.token)
             .addEventListeners(discordEventListener)
             .enableIntents(GatewayIntent.MESSAGE_CONTENT)
             .build()
@@ -92,7 +89,7 @@ class Config {
     }
 
     @Bean
-    fun dalleImageOptions(imageProperties: OpenAiImageProperties) : ImageOptions {
+    fun dalleImageOptions(imageProperties: OpenAiImageProperties): ImageOptions {
         return OpenAiImageOptions.builder()
             .withHeight(imageProperties.options.height)
             .withWidth(imageProperties.options.width)

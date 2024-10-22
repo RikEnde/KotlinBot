@@ -1,36 +1,73 @@
 package kenny.kotlinbot.storage.postgres
 
 import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.StorageService.Companion.fileName
+import kenny.kotlinbot.storage.StorageService.Companion.url
 import kenny.kotlinbot.storage.StoredImageResult
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.io.ByteArrayInputStream
 import java.io.InputStream
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import kotlin.jvm.optionals.getOrElse
 
 @Profile("postgres")
 @Service
-//@Transactional
-class PostgresStorageService : StorageService {
-    override fun store(url: String, userName: String, prompt: String, revisedPrompt: String) {
-        TODO("Not yet implemented")
+@Transactional
+class PostgresStorageService(val imageRepository: ImageRepositoryPostgres) : StorageService {
+    override fun store(urlStr: String, userName: String, prompt: String, revisedPrompt: String): StoredImageResult {
+        val url = url(urlStr)
+        val fileName = fileName(url)
+        val data = url.openStream().use { it.readBytes() }
+
+        val image = Image(
+            imageData = data,
+            fileName = fileName,
+            userName = userName,
+            discordUrl = null,
+            prompt = prompt,
+            revisedPrompt = revisedPrompt,
+            createdAt = LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC"))
+        )
+
+        val savedImage = imageRepository.save(image)
+        return imageResultMapper(savedImage)
     }
 
-    override fun list(userName: String): List<StoredImageResult> {
-        TODO("Not yet implemented")
+    val imageResultMapper: (ImageProjection) -> StoredImageResult = { f ->
+        StoredImageResult(
+            f.id.toString(),
+            f.fileName.toString(),
+            StoredImageResult.MetaData(
+                f.userName.toString(),
+                f.discordUrl,
+                f.prompt.toString(),
+                f.revisedPrompt.toString()
+            )
+        )
     }
 
-    override fun deleteUserData(unitTest: String) {
-        TODO("Not yet implemented")
-    }
+    override fun list(userName: String): List<StoredImageResult> =
+        imageRepository.findTop10ByUserNameOrderByCreatedAtDesc(userName).map(imageResultMapper)
 
-    override fun findByPrompt(unitTest: String, prompt: String): List<StoredImageResult> {
-        TODO("Not yet implemented")
-    }
+    override fun deleteUserData(userName: String) = imageRepository.deleteAllByUserName(userName)
+
+    override fun findByPrompt(userName: String, prompt: String): List<StoredImageResult> =
+        imageRepository.findByUserNameAndPrompt(userName, prompt).map(imageResultMapper)
+
+    override fun findById(id: String): StoredImageResult? =
+        imageRepository.findById(id.toLong()).map { imageResultMapper(it) }.orElse(null)
 
     override fun load(id: String): InputStream {
-        TODO("Not yet implemented")
+        val image = imageRepository.findById(id.toLong()).getOrElse {
+            throw RuntimeException("Not found id $id")
+        }
+        return ByteArrayInputStream(image.imageData)
     }
 
-    override fun update(id: String, discordUrl: String) {
-        TODO("Not yet implemented")
-    }
+    override fun update(id: String, discordUrl: String) =
+        imageRepository.updateDiscordUrlById(id.toLong(), discordUrl)
 }
