@@ -7,13 +7,32 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.MongoDBContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.util.*
 import kotlin.test.Test
 
 @DataMongoTest
 @Import(StorageServiceMongo::class)
-@ActiveProfiles("openai", "mongo")
-class StorageServiceMongoIT {
+@ActiveProfiles("mongo")
+@Testcontainers
+class MongoStorageServiceIT {
+    companion object {
+        // Define and start MongoDBContainer
+        @Container
+        val mongoContainer: MongoDBContainer = MongoDBContainer("mongo:6.0.9")
+
+        // Dynamically set MongoDB URI for the Spring context
+        @JvmStatic
+        @DynamicPropertySource
+        fun mongoProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl)
+        }
+    }
+
     @Autowired
     private lateinit var storageService: StorageServiceMongo
 

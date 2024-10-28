@@ -5,7 +5,7 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   datasource:
     url: jdbc:postgresql://localhost:5432/images
     username: postgres

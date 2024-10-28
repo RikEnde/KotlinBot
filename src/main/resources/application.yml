@@ -40,7 +40,7 @@ discord:
 
 logging:
   level:
-    root: DEBUG
+    root: INFO
 #    org.springframework: DEBUG
 #    org.springframework.web: DEBUG
 #    org.springframework.boot: DEBUG

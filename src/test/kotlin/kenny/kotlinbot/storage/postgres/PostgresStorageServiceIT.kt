@@ -1,27 +1,50 @@
 package kenny.kotlinbot.storage.postgres
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.transaction.annotation.Transactional
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.util.*
 import kotlin.test.Test
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [TestConfig::class])
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-@ActiveProfiles("openai", "postgres")
+@ActiveProfiles("postgres")
+@Testcontainers
 class PostgresStorageServiceIT {
 
     @Autowired
     private lateinit var storageService: PostgresStorageService
 
     private val IMAGE_URL = "file:src/test/resources/image.jpg"
+
+    companion object {
+        // Define the PostgreSQLContainer
+        @Container
+        val postgresContainer: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:15.2")
+            .apply {
+                withDatabaseName("images")
+                withUsername("postgres")
+                withPassword("postgres")
+            }
+
+        // Set dynamic properties for the Spring context to use Testcontainers PostgreSQL instance
+        @JvmStatic
+        @DynamicPropertySource
+        fun postgresProperties(registry: DynamicPropertyRegistry) {
+            registry.add("spring.datasource.url", postgresContainer::getJdbcUrl)
+            registry.add("spring.datasource.username", postgresContainer::getUsername)
+            registry.add("spring.datasource.password", postgresContainer::getPassword)
+        }
+    }
 
     @Test
     fun testStoreAndLoad() {
