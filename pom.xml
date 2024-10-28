@@ -54,6 +54,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-pgvector-store-spring-boot-starter</artifactId>
         </dependency>
@@ -115,6 +120,21 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>postgres</id>
+            <properties>
+                <spring.profiles.active>postgres,openai</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>mongo</id>
+            <properties>
+                <spring.profiles.active>mongo,openai</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>

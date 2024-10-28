@@ -10,6 +10,15 @@ services:
       - OPENAI_KEY=${OPENAI_KEY}
     network_mode: host
 
+  mongodb:
+    image: arm64v8/mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+        - db_network
+
   postgres:
     build:
       context: .

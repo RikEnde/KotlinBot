@@ -12,3 +12,4 @@ target/
 
 .env
 pgdata/
+data/
