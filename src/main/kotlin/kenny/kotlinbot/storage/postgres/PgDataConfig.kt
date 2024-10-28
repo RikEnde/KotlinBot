@@ -5,6 +5,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @Configuration
-@Profile("postgres", "openai")
+@Profile("postgres")
 @EnableJpaRepositories(basePackages = ["kenny.kotlinbot.storage.postgres"])
 class PgDataConfig
