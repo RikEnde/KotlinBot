@@ -4,14 +4,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    hibernate:
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/images
     username: postgres
     password: postgres
-  ai:
-    vectorstore:
-      pgvector:
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1536
-        initialize-schema: true
+#  ai:
+#    vectorstore:
+#      pgvector:
+#        index-type: HNSW
+#        distance-type: COSINE_DISTANCE
+#        dimensions: 1536
+#        initialize-schema: true

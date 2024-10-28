@@ -2,17 +2,15 @@ package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ImageService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import kotlin.test.Test
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@ActiveProfiles("openai", "postgres")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [TestConfig::class])
+@ActiveProfiles("openai")
 class DallEImageServiceIT {
+
     @Autowired
     private lateinit var imageService: ImageService
 

@@ -2,7 +2,6 @@ package kenny.kotlinbot.discord
 
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.ai.ImageService
-import kenny.kotlinbot.config.ApplicationProperties
 import kenny.kotlinbot.storage.StorageService
 import kenny.kotlinbot.storage.StoredImageResult
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
@@ -21,17 +20,17 @@ class DiscordEventListener(
     val chatService: ChatService,
     val imageService: ImageService,
     val storageService: StorageService,
-    val properties: ApplicationProperties
+    val properties: DiscordProperties
 ) : ListenerAdapter() {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     fun send(message: String, action: (String) -> Unit) {
-        val parts = message.chunked(properties.discord.messageSize)
+        val parts = message.chunked(properties.messageSize)
         parts.forEach(action)
     }
 
-    fun cap(message: String?): String? = message?.take(properties.discord.messageSize)
+    fun cap(message: String?): String? = message?.take(properties.messageSize)
 
     /**
      * Determine if messages are meant for the bot. PMs are treated as prompts.

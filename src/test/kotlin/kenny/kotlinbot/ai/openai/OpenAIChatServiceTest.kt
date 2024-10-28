@@ -1,6 +1,6 @@
 package kenny.kotlinbot.ai.openai
 
-import kenny.kotlinbot.config.ApplicationProperties
+import kenny.kotlinbot.ai.ChatProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito.mock
@@ -26,11 +26,8 @@ class OpenAIChatServiceTest {
         model= "gpt-4o"
     }
 
-    private val properties = ApplicationProperties().apply {
+    private val properties = ChatProperties().apply {
         defaultRole = "Your unit testing role is {role}."
-        discord = ApplicationProperties.DiscordProperties().apply {
-            token = "123456abc"
-        }
     }
 
     @BeforeEach

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: postgres,openai
+    active: openai
   threads:
     virtual:
       enabled: true
@@ -26,9 +26,6 @@ spring:
     name: discord-bot
 
 application:
-  discord:
-    token: ${DISCORD_TOKEN}
-    message-size: 2000
   default-role: |
     Your current role is {role}. 
     You will never explicitly state your role.
@@ -37,10 +34,15 @@ application:
     You will never use a phrase like as a language model AI.
     You will not prepend responses with AI:
 
+discord:
+  token: ${DISCORD_TOKEN}
+  message-size: 2000
+
 logging:
   level:
-    root: INFO
+    root: DEBUG
 #    org.springframework: DEBUG
 #    org.springframework.web: DEBUG
 #    org.springframework.boot: DEBUG
 #    org.springframework.data: DEBUG
+

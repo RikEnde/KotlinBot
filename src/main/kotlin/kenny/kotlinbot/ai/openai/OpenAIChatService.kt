@@ -1,7 +1,7 @@
 package kenny.kotlinbot.ai.openai
 
+import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.ai.ChatService
-import kenny.kotlinbot.config.ApplicationProperties
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.UserMessage
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
 class OpenAIChatService(
     val chatOptions: OpenAiChatOptions,
     val chatModel: OpenAiChatModel,
-    val properties: ApplicationProperties
+    val properties: ChatProperties
 ) : ChatService {
     private var systemMessage: Message? = null
     private val chats = ConcurrentHashMap<String, List<Message>>()
