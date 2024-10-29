@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [TestConfig::class])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [OpenAITestConfig::class])
 @ActiveProfiles("openai")
 class DallEImageServiceIT {
 

@@ -24,13 +24,13 @@ class Image() : ImageProjection {
     @Column(name = "user_name")
     override var userName: String? = null
 
-    @Column(name = "discord_url")
+    @Column(name = "discord_url", columnDefinition = "TEXT")
     override var discordUrl: String? = null
 
-    @Column(name = "prompt")
+    @Column(name = "prompt", columnDefinition = "TEXT")
     override var prompt: String? = null
 
-    @Column(name = "revised_prompt")
+    @Column(name = "revised_prompt", columnDefinition = "TEXT")
     override var revisedPrompt: String? = null
 
     @Column(name = "created_at", insertable = false, updatable = false)
@@ -62,21 +62,13 @@ class Image() : ImageProjection {
         if (this === other) return true
         if (other !is Image) return false
 
-        return id == other.id && Arrays.equals(
-            imageData,
-            other.imageData
-        ) && fileName == other.fileName && userName == other.userName && discordUrl == other.discordUrl && prompt == other.prompt && revisedPrompt == other.revisedPrompt && createdAt == other.createdAt
+        // If the ID is null, the entities are not persisted yet, so they are not equal
+        if (id == null || other.id == null) return false
+
+        return id == other.id
     }
 
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        result = 31 * result + (imageData?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + (fileName?.hashCode() ?: 0)
-        result = 31 * result + (userName?.hashCode() ?: 0)
-        result = 31 * result + (discordUrl?.hashCode() ?: 0)
-        result = 31 * result + (prompt?.hashCode() ?: 0)
-        result = 31 * result + (revisedPrompt?.hashCode() ?: 0)
-        result = 31 * result + (createdAt?.hashCode() ?: 0)
-        return result
+        return id?.hashCode() ?: 0
     }
 }

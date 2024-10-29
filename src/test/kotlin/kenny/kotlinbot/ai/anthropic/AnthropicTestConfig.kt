@@ -1,4 +1,4 @@
-package kenny.kotlinbot.ai.openai
+package kenny.kotlinbot.ai.anthropic
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
@@ -19,4 +19,4 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
     ],
     scanBasePackages = ["kenny.kotlinbot.ai"]
 )
-class TestConfig
+class AnthropicTestConfig
