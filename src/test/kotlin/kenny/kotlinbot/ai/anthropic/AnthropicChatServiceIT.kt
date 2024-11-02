@@ -1,4 +1,4 @@
-package kenny.kotlinbot.ai.openai
+package kenny.kotlinbot.ai.anthropic
 
 import kenny.kotlinbot.ai.ChatService
 import org.assertj.core.api.Assertions.assertThat
@@ -8,10 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [OpenAITestConfig::class])
-@ActiveProfiles("openai")
-class OpenAIChatServiceIT {
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [AnthropicTestConfig::class])
+@ActiveProfiles("anthropic")
+class AnthropicChatServiceIT {
     @Autowired
     private lateinit var chatService: ChatService
 

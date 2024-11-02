@@ -7,7 +7,7 @@ import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
-@Profile("openai")
+@Profile("dalle")
 @Service
 class DallEImageService(
     private val dalleImageOptions: ImageOptions,

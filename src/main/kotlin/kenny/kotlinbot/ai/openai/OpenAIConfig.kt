@@ -17,7 +17,7 @@ import java.time.Duration
 class OpenAIConfig {
 
     @Bean
-    fun chatOptions(chatProperties: OpenAiChatProperties): OpenAiChatOptions {
+    fun openAiChatOptions(chatProperties: OpenAiChatProperties): OpenAiChatOptions {
         val defaultOptions = chatProperties.options
         return OpenAiChatOptions.builder()
             .withModel(defaultOptions.model)
