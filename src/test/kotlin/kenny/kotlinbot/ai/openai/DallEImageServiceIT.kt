@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [OpenAITestConfig::class])
-@ActiveProfiles("openai")
+@ActiveProfiles("dalle")
 class DallEImageServiceIT {
 
     @Autowired

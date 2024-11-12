@@ -159,13 +159,13 @@
         <profile>
             <id>postgres</id>
             <properties>
-                <spring.profiles.active>postgres,openai</spring.profiles.active>
+                <spring.profiles.active>postgres,openai,dalle</spring.profiles.active>
             </properties>
         </profile>
         <profile>
             <id>mongo</id>
             <properties>
-                <spring.profiles.active>mongo,openai</spring.profiles.active>
+                <spring.profiles.active>mongo,openai,dalle</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
@@ -179,14 +179,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*IT.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
 
             <!-- Maven Failsafe Plugin for integration tests -->

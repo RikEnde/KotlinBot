@@ -1,6 +1,11 @@
-FROM --platform=linux/arm64 eclipse-temurin:22.0.1_8-jdk
+FROM arm64v8/eclipse-temurin:23-alpine
+
 ENV DISCORD_TOKEN="${DISCORD_TOKEN}"
 ENV OPENAI_KEY="${OPENAI_KEY}"
+ENV SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}"
+ENV POSTGRES_USER="${POSTGRES_USER}"
+ENV POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"
+ENV POSTGRES_DB="${POSTGRES_DB}"
 
 EXPOSE 8080
 
@@ -8,4 +13,4 @@ ARG JAR_FILE=target/*.jar
 
 ADD ${JAR_FILE} app.jar
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE:postgres,openai,dalle}"]
