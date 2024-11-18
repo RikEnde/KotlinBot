@@ -180,6 +180,7 @@ class DiscordEventListener(
         try {
             val imageData = imageService.image(prompt, userName)
             channel.sendMessage(imageData.url).queue()
+            chatService.imageChat(userName, prompt, imageData.revisedPrompt)
             storageService.store(imageData.url, userName, prompt, imageData.revisedPrompt)
             return imageData.revisedPrompt
         } catch (e: NonTransientAiException) {

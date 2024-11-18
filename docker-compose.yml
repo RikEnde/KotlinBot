@@ -1,11 +1,14 @@
 services:
   kotlinbot:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: kotlinbot:0.0.1-SNAPSHOT
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - OPENAI_KEY=${OPENAI_KEY}
+      - ANTHROPIC_KEY=${ANTHROPIC_KEY}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     network_mode: host
 
   mongodb:

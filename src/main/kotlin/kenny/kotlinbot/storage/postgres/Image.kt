@@ -18,10 +18,10 @@ class Image() : ImageProjection {
     @Column(name = "image_data")
     var imageData: ByteArray? = null
 
-    @Column(name = "file_name")
+    @Column(name = "file_name", columnDefinition = "TEXT")
     override var fileName: String? = null
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", columnDefinition = "TEXT")
     override var userName: String? = null
 
     @Column(name = "discord_url", columnDefinition = "TEXT")

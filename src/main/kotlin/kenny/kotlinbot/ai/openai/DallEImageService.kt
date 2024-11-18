@@ -18,8 +18,8 @@ class DallEImageService(
 
         val response = imageModel.call(imagePrompt)
 
-        val image: Image = response.getResult().output
-        val metaData: ImageGenerationMetadata = response.getResult().metadata
+        val image: Image = response.result.output
+        val metaData: ImageGenerationMetadata = response.result.metadata
         val revisedPrompt = (metaData as OpenAiImageGenerationMetadata).revisedPrompt
 
         return ImageResult(image.url, prompt, revisedPrompt)
