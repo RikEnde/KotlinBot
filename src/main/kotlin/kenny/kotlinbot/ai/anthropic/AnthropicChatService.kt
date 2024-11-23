@@ -3,6 +3,7 @@ package kenny.kotlinbot.ai.anthropic
 import kenny.kotlinbot.ai.BaseChatService
 import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.ai.ChatService
+import kenny.kotlinbot.storage.ChatStorageService
 import org.springframework.ai.anthropic.AnthropicChatModel
 import org.springframework.ai.anthropic.AnthropicChatOptions
 import org.springframework.context.annotation.Profile
@@ -12,8 +13,9 @@ import org.springframework.stereotype.Service
 @Service
 class AnthropicChatService(val anthropicChatOptions: AnthropicChatOptions,
                            override val chatModel: AnthropicChatModel,
-                           override val properties: ChatProperties
-): BaseChatService(anthropicChatOptions, chatModel, properties), ChatService {
+                           override val properties: ChatProperties,
+                           override val chatStorage: ChatStorageService
+): BaseChatService(anthropicChatOptions, chatModel, properties, chatStorage), ChatService {
 
     override fun temperature(temp: Double): String {
         if (temp > 0 && temp <= 2.0) {

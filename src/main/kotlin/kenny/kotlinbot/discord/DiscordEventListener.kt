@@ -7,10 +7,6 @@ import kenny.kotlinbot.storage.StoredImageResult
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.events.session.SessionDisconnectEvent
-import net.dv8tion.jda.api.events.session.SessionRecreateEvent
-import net.dv8tion.jda.api.events.session.SessionResumeEvent
-import net.dv8tion.jda.api.events.session.ShutdownEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.utils.FileUpload
@@ -191,10 +187,4 @@ class DiscordEventListener(
             return "Error generating image: ${e.message}"
         }
     }
-
-    fun onSessionDisconnect(@Nonnull event: SessionDisconnectEvent?) {}
-    fun onSessionResume(@Nonnull event: SessionResumeEvent?) {}
-    fun onSessionRecreate(@Nonnull event: SessionRecreateEvent?) {}
-    fun onShutdown(@Nonnull event: ShutdownEvent?) {}
-
 }

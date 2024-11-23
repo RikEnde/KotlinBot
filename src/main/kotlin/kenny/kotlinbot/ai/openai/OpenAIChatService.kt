@@ -3,6 +3,8 @@ package kenny.kotlinbot.ai.openai
 import kenny.kotlinbot.ai.BaseChatService
 import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.ai.ChatService
+import kenny.kotlinbot.storage.ChatStorageService
+import kenny.kotlinbot.storage.postgres.ChatStorageServicePostgres
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.context.annotation.Profile
@@ -13,8 +15,9 @@ import org.springframework.stereotype.Service
 class OpenAIChatService(
     val openAiChatOptions: OpenAiChatOptions,
     override val chatModel: OpenAiChatModel,
-    override val properties: ChatProperties
-) : BaseChatService(openAiChatOptions, chatModel, properties), ChatService {
+    override val properties: ChatProperties,
+    override val chatStorage: ChatStorageService
+) : BaseChatService(openAiChatOptions, chatModel, properties, chatStorage), ChatService {
 
     override fun temperature(temp: Double): String {
         if (temp > 0 && temp <= 2.0) {
