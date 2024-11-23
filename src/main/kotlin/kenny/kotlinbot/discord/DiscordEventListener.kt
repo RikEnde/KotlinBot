@@ -2,11 +2,15 @@ package kenny.kotlinbot.discord
 
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.ai.ImageService
-import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.ImageStorageService
 import kenny.kotlinbot.storage.StoredImageResult
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
+import net.dv8tion.jda.api.events.session.SessionDisconnectEvent
+import net.dv8tion.jda.api.events.session.SessionRecreateEvent
+import net.dv8tion.jda.api.events.session.SessionResumeEvent
+import net.dv8tion.jda.api.events.session.ShutdownEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.utils.FileUpload
@@ -19,7 +23,7 @@ import org.springframework.stereotype.Component
 class DiscordEventListener(
     val chatService: ChatService,
     val imageService: ImageService,
-    val storageService: StorageService,
+    val storageService: ImageStorageService,
     val properties: DiscordProperties
 ) : ListenerAdapter() {
 
@@ -187,4 +191,10 @@ class DiscordEventListener(
             return "Error generating image: ${e.message}"
         }
     }
+
+    fun onSessionDisconnect(@Nonnull event: SessionDisconnectEvent?) {}
+    fun onSessionResume(@Nonnull event: SessionResumeEvent?) {}
+    fun onSessionRecreate(@Nonnull event: SessionRecreateEvent?) {}
+    fun onShutdown(@Nonnull event: ShutdownEvent?) {}
+
 }

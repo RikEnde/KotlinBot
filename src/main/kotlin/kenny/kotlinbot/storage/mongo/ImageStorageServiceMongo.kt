@@ -1,9 +1,9 @@
 package kenny.kotlinbot.storage.mongo
 
 import com.mongodb.client.gridfs.model.GridFSFile
-import kenny.kotlinbot.storage.StorageService
-import kenny.kotlinbot.storage.StorageService.Companion.fileName
-import kenny.kotlinbot.storage.StorageService.Companion.url
+import kenny.kotlinbot.storage.ImageStorageService
+import kenny.kotlinbot.storage.ImageStorageService.Companion.fileName
+import kenny.kotlinbot.storage.ImageStorageService.Companion.url
 import kenny.kotlinbot.storage.StoredImageResult
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
@@ -16,7 +16,7 @@ import java.io.InputStream
 
 @Profile("mongo")
 @Service
-class StorageServiceMongo(val gridFsTemplate: GridFsTemplate, val mongoTemplate: MongoTemplate) : StorageService {
+class ImageStorageServiceMongo(val gridFsTemplate: GridFsTemplate, val mongoTemplate: MongoTemplate) : ImageStorageService {
     val mapper = { f: GridFSFile ->
         StoredImageResult(
             f.objectId.toHexString(),

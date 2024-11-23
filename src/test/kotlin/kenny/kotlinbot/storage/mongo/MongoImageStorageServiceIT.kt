@@ -16,10 +16,10 @@ import java.util.*
 import kotlin.test.Test
 
 @DataMongoTest
-@Import(StorageServiceMongo::class)
+@Import(ImageStorageServiceMongo::class)
 @ActiveProfiles("mongo")
 @Testcontainers
-class MongoStorageServiceIT {
+class MongoImageStorageServiceIT {
     companion object {
         // Define and start MongoDBContainer
         @Container
@@ -34,7 +34,7 @@ class MongoStorageServiceIT {
     }
 
     @Autowired
-    private lateinit var storageService: StorageServiceMongo
+    private lateinit var storageService: ImageStorageServiceMongo
 
     val IMAGE_URL = "file:src/test/resources/image.jpg"
     val testUser1 = "UnitTest"

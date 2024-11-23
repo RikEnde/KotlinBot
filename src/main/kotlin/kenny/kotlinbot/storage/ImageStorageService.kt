@@ -7,7 +7,7 @@ import java.net.URL
 /**
  * Service for local storage of images
  */
-interface StorageService {
+interface ImageStorageService {
     fun store(urlStr: String, userName: String, prompt: String, revisedPrompt: String): StoredImageResult
 
     fun list(userName: String): List<StoredImageResult>

@@ -9,15 +9,15 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.Test
 
-class PostgresStorageServiceTest {
+class PostgresImageStorageServiceTest {
     val imageRepository: ImageRepositoryPostgres = mock()
-    lateinit var storageService: PostgresStorageService
+    lateinit var storageService: ImageStorageServicePostgres
 
     val IMAGE_URL = "file:src/test/resources/image.jpg"
 
     @BeforeEach
     fun setUp() {
-        storageService = PostgresStorageService(imageRepository)
+        storageService = ImageStorageServicePostgres(imageRepository)
     }
 
     @Test

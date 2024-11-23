@@ -1,8 +1,8 @@
 package kenny.kotlinbot.storage.postgres
 
-import kenny.kotlinbot.storage.StorageService
-import kenny.kotlinbot.storage.StorageService.Companion.fileName
-import kenny.kotlinbot.storage.StorageService.Companion.url
+import kenny.kotlinbot.storage.ImageStorageService
+import kenny.kotlinbot.storage.ImageStorageService.Companion.fileName
+import kenny.kotlinbot.storage.ImageStorageService.Companion.url
 import kenny.kotlinbot.storage.StoredImageResult
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -17,7 +17,7 @@ import kotlin.jvm.optionals.getOrElse
 @Profile("postgres")
 @Service
 @Transactional
-class PostgresStorageService(val imageRepository: ImageRepositoryPostgres) : StorageService {
+class ImageStorageServicePostgres(val imageRepository: ImageRepositoryPostgres) : ImageStorageService {
     override fun store(urlStr: String, userName: String, prompt: String, revisedPrompt: String): StoredImageResult {
         val url = url(urlStr)
         val fileName = fileName(url)

@@ -3,7 +3,7 @@ package kenny.kotlinbot.discord
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.ai.ImageResult
 import kenny.kotlinbot.ai.ImageService
-import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.ImageStorageService
 import kenny.kotlinbot.storage.StoredImageResult
 import kenny.kotlinbot.storage.StoredImageResult.MetaData
 import net.dv8tion.jda.api.entities.Message
@@ -31,7 +31,7 @@ class DiscordEventListenerTest {
 
     private val chatService: ChatService = mock()
     private val imageService: ImageService = mock()
-    private val storageService: StorageService = mock()
+    private val storageService: ImageStorageService = mock()
 
     private val properties = DiscordProperties().apply {
         token = "123456abc"
