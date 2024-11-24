@@ -2,11 +2,13 @@ package kenny.kotlinbot.storage.postgres
 
 import kenny.kotlinbot.storage.ChatStorageService
 import kenny.kotlinbot.storage.StoredChat
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
+@Profile("postgres")
 @Transactional
 class ChatStorageServicePostgres(val chatRepository: ChatRepositoryPostgres) : ChatStorageService {
     override fun users(): List<String> {
@@ -17,7 +19,6 @@ class ChatStorageServicePostgres(val chatRepository: ChatRepositoryPostgres) : C
         chats.forEach {
             val chat = Chat(it.userName, it.type, it.chat, LocalDateTime.now())
             chatRepository.save(chat)
-            println("Saved: $chat")
         }
     }
 
