@@ -224,9 +224,13 @@
                 <configuration>
                     <image>
                         <name>kotlinbot:${project.version}</name>
-                        <platforms>
-                            <platform>${docker.platform}</platform>
-                        </platforms>
+                        <builder>paketobuildpacks/builder-jammy-buildpackless-tiny</builder>
+                        <buildpacks>
+                            <buildpack>paketobuildpacks/java</buildpack>
+                        </buildpacks>
+                        <env>
+                            <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+                        </env>
                     </image>
                 </configuration>
                 <executions>

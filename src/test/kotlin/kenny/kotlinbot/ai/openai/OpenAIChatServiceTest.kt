@@ -1,6 +1,7 @@
 package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatProperties
+import kenny.kotlinbot.storage.ChatStorageService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito.mock
@@ -18,6 +19,7 @@ import kotlin.test.Test
 
 class OpenAIChatServiceTest {
     private val chatModel: OpenAiChatModel = mock()
+    private val chatStorageService: ChatStorageService = mock()
     private lateinit var chatService: OpenAIChatService
 
     private val chatOptions = OpenAiChatOptions().apply {
@@ -32,7 +34,7 @@ class OpenAIChatServiceTest {
 
     @BeforeEach
     fun setUp() {
-        chatService = OpenAIChatService(chatOptions, chatModel, properties)
+        chatService = OpenAIChatService(chatOptions, chatModel, properties, chatStorageService)
     }
 
     @Test

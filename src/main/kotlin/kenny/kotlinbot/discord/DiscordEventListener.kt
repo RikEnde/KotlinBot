@@ -2,7 +2,7 @@ package kenny.kotlinbot.discord
 
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.ai.ImageService
-import kenny.kotlinbot.storage.StorageService
+import kenny.kotlinbot.storage.ImageStorageService
 import kenny.kotlinbot.storage.StoredImageResult
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 class DiscordEventListener(
     val chatService: ChatService,
     val imageService: ImageService,
-    val storageService: StorageService,
+    val storageService: ImageStorageService,
     val properties: DiscordProperties
 ) : ListenerAdapter() {
 

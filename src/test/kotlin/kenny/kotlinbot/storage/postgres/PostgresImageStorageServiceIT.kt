@@ -19,10 +19,10 @@ import kotlin.test.Test
 @Transactional
 @ActiveProfiles("postgres")
 @Testcontainers
-class PostgresStorageServiceIT {
+class PostgresImageStorageServiceIT {
 
     @Autowired
-    private lateinit var storageService: PostgresStorageService
+    private lateinit var storageService: ImageStorageServicePostgres
 
     private val IMAGE_URL = "file:src/test/resources/image.jpg"
 
