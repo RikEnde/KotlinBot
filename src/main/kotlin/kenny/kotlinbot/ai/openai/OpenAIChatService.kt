@@ -4,7 +4,6 @@ import kenny.kotlinbot.ai.BaseChatService
 import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.ai.ChatService
 import kenny.kotlinbot.storage.ChatStorageService
-import kenny.kotlinbot.storage.postgres.ChatStorageServicePostgres
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.context.annotation.Profile

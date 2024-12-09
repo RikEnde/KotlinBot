@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import kenny.kotlinbot.storage.ChatStorageService
 import kenny.kotlinbot.storage.StoredChat
@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-@Profile("postgres")
+@Profile(value = ["postgres", "h2"])
 @Transactional
 class ChatStorageServicePostgres(val chatRepository: ChatRepositoryPostgres) : ChatStorageService {
     override fun users(): List<String> {
@@ -22,11 +22,12 @@ class ChatStorageServicePostgres(val chatRepository: ChatRepositoryPostgres) : C
         }
     }
 
-    override fun getUserChats(userName: String): List<StoredChat> {
-        return chatRepository.getChatsByUserName(userName).map { StoredChat(it.userName!!, it.type!!, it.chat!!) };
-    }
+    override fun getUserChats(userName: String): List<StoredChat> =
+        chatRepository.getChatsByUserName(userName)
+            .map {
+                StoredChat(it.userName!!, it.type!!, it.chat!!)
+            };
 
-    override fun removeUserChats(userName: String) {
+    override fun removeUserChats(userName: String) =
         chatRepository.deleteChatsByUserName(userName)
-    }
 }

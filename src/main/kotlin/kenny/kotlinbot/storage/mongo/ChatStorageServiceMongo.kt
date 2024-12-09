@@ -20,7 +20,9 @@ class ChatStorageServiceMongo(val chatRepository:  ChatRepositoryMongo) : ChatSt
         return chatRepository.findByUserName(userName)
     }
 
-    override fun removeUserChats(userName: String) {
+    override fun removeUserChats(userName: String): Int {
+        val count = chatRepository.countByUserName(userName)
         chatRepository.deleteByUserName(userName)
+        return count
     }
 }

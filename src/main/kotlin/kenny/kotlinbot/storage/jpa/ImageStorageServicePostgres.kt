@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import kenny.kotlinbot.storage.ImageStorageService
 import kenny.kotlinbot.storage.ImageStorageService.Companion.fileName
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.jvm.optionals.getOrElse
 
-@Profile("postgres")
+@Profile(value = ["postgres", "h2"])
 @Service
 @Transactional
 class ImageStorageServicePostgres(val imageRepository: ImageRepositoryPostgres) : ImageStorageService {

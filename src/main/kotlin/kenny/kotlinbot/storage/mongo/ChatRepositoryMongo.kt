@@ -12,6 +12,7 @@ interface ChatRepositoryMongo : MongoRepository<StoredChat, String> {
 
     fun findByUserName(userName: String): List<StoredChat>
     fun deleteByUserName(userName: String)
+    fun countByUserName(userName: String): Int
 
     @Aggregation(pipeline = [
         "{ '\$group': { '_id': '\$userName' } }",

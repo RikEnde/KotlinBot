@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.JpaRepository
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
-@Profile("postgres")
+@Profile(value = ["postgres", "h2"])
 @Repository
 interface ImageRepositoryPostgres : JpaRepository<Image, Long> {
     fun findTop10ByUserNameOrderByCreatedAtDesc(userName: String): List<ImageProjection>

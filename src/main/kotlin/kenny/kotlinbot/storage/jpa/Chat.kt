@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import jakarta.persistence.*
 import kenny.kotlinbot.storage.ChatType
