@@ -25,7 +25,7 @@ class Chat() {
     @Column(name = "chat", columnDefinition = "TEXT")
     var chat: String? = null
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     var createdAt: LocalDateTime? = null
 
     constructor(
