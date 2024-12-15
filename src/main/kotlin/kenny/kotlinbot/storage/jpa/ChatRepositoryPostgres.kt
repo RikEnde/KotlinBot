@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
-@Profile(value = ["postgres", "h2"])
+@Profile("postgres")
 @Repository
 interface ChatRepositoryPostgres : JpaRepository<Chat, Long> {
     @Query("SELECT DISTINCT c.userName FROM Chat c")

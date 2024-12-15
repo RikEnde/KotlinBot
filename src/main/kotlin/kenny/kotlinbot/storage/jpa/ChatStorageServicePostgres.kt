@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-@Profile(value = ["postgres", "h2"])
+@Profile("postgres", "h2")
 @Transactional
 class ChatStorageServicePostgres(val chatRepository: ChatRepositoryPostgres) : ChatStorageService {
     override fun users(): List<String> {

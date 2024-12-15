@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.jvm.optionals.getOrElse
 
-@Profile(value = ["postgres", "h2"])
+@Profile("postgres")
 @Service
 @Transactional
 class ImageStorageServicePostgres(val imageRepository: ImageRepositoryPostgres) : ImageStorageService {

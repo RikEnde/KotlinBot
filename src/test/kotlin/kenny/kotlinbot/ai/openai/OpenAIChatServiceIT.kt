@@ -1,19 +1,24 @@
 package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatService
+import kenny.kotlinbot.storage.jpa.ChatStorageServicePostgres
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import kotlin.test.Test
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [OpenAITestConfig::class])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = [OpenAITestConfig::class, ChatStorageServicePostgres::class])
 @ActiveProfiles("openai")
 class OpenAIChatServiceIT {
 
     @Autowired
     private lateinit var chatService: ChatService
+    
+    @MockBean
+    lateinit var chatStorageService: ChatStorageServicePostgres
 
     @Test
     fun chat_sayHelloWorld() {
