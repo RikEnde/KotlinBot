@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import kenny.kotlinbot.storage.ImageStorageService
 import kenny.kotlinbot.storage.ImageStorageService.Companion.fileName

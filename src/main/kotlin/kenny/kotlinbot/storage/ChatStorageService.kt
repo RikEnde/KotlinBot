@@ -4,7 +4,7 @@ interface ChatStorageService {
     fun users(): List<String>
     fun saveUserChats(chats: List<StoredChat>)
     fun getUserChats(userName: String): List<StoredChat>
-    fun removeUserChats(userName: String)
+    fun removeUserChats(userName: String): Int
 }
 
 data class StoredChat(val userName: String, val type: ChatType, val chat: String)

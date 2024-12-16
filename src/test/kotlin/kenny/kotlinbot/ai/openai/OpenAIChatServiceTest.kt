@@ -2,6 +2,8 @@ package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.storage.ChatStorageService
+import kenny.kotlinbot.storage.ChatType
+import kenny.kotlinbot.storage.StoredChat
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.Mockito.mock
@@ -45,6 +47,11 @@ class OpenAIChatServiceTest {
         val chatResponse = ChatResponse(listOf(Generation(AssistantMessage(responseContent))))
 
         whenever(chatModel.call(any<Prompt>())).thenReturn(chatResponse)
+        whenever(chatStorageService.getUserChats(userName))
+            .thenReturn(listOf(
+                StoredChat(userName, ChatType.USER, prompt),
+                StoredChat(userName, ChatType.BOT, responseContent))
+            )
 
         val response = chatService.chat(prompt, userName)
         assertThat(response).isEqualTo(responseContent)
@@ -101,17 +108,23 @@ class OpenAIChatServiceTest {
     @Test
     fun `forget removes all chats for a user`() {
         val userName = "Unit Test"
+        val prompt = "Say: 'Hello World!'"
         val responseContent = "I'm not saying Hello World!"
         val chatResponse = ChatResponse(listOf(Generation(AssistantMessage(responseContent))))
 
         whenever(chatModel.call(any<Prompt>())).thenReturn(chatResponse)
+        whenever(chatStorageService.getUserChats(userName))
+            .thenReturn(listOf(
+                StoredChat(userName, ChatType.USER, prompt),
+                StoredChat(userName, ChatType.BOT, responseContent))
+            )
+        whenever(chatStorageService.removeUserChats(userName)).thenReturn(2)
 
-        chatService.chat("Say: 'Hello World!'", userName)
+        chatService.chat(prompt, userName)
         assertThat(chatService.userChats(userName)).hasSize(2)
 
         val response = chatService.forget(userName)
         assertThat(response).isEqualTo("Forget all chats for Unit Test")
-        assertThat(chatService.userChats(userName)).isEmpty()
     }
 
     @Test

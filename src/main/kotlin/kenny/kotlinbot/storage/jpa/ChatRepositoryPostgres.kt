@@ -1,4 +1,4 @@
-package kenny.kotlinbot.storage.postgres
+package kenny.kotlinbot.storage.jpa
 
 import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.JpaRepository
@@ -15,5 +15,5 @@ interface ChatRepositoryPostgres : JpaRepository<Chat, Long> {
     fun getChatsByUserName(userName: String): List<Chat>
 
     @Modifying(clearAutomatically = true)
-    fun deleteChatsByUserName(userName: String)
+    fun deleteChatsByUserName(userName: String): Int
 }
