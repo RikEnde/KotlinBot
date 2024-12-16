@@ -1,23 +1,19 @@
 package kenny.kotlinbot.ai
 
 import kenny.kotlinbot.storage.ChatStorageService
-import kenny.kotlinbot.storage.ChatType
 import kenny.kotlinbot.storage.ChatType.BOT
 import kenny.kotlinbot.storage.ChatType.USER
 import kenny.kotlinbot.storage.StoredChat
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.ai.chat.messages.*
+import org.springframework.ai.chat.messages.AssistantMessage
+import org.springframework.ai.chat.messages.Message
+import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.model.ChatResponse
 import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
-import org.springframework.context.event.ContextClosedEvent
-import org.springframework.context.event.ContextRefreshedEvent
-import org.springframework.context.event.EventListener
-import org.springframework.scheduling.annotation.Async
-import java.util.concurrent.ConcurrentHashMap
 
 
 abstract class BaseChatService(
