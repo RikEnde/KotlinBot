@@ -28,18 +28,21 @@ ALTER DATABASE images OWNER TO postgres;
 
 \connect images
 
-CREATE TABLE public.images (
-                               id bigint NOT NULL,
-                               image_data bytea,
-                               discord_url text,
-                               file_name text,
-                               user_name text,
-                               prompt text,
-                               revised_prompt text,
-                               created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.images
+(
+    id             bigint not null,
+    created_at     timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    discord_url    TEXT,
+    file_name      TEXT,
+    image_data     bytea,
+    prompt         TEXT,
+    revised_prompt TEXT,
+    user_name      TEXT,
+    primary key (id)
 );
 
-ALTER TABLE public.images OWNER TO postgres;
+ALTER TABLE public.images
+    OWNER TO postgres;
 
 CREATE SEQUENCE public.images_id_seq
     START WITH 1
@@ -48,15 +51,34 @@ CREATE SEQUENCE public.images_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER SEQUENCE public.images_id_seq OWNER TO postgres;
 ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
 
-ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
+ALTER TABLE ONLY public.images
+    ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
 
 SELECT pg_catalog.setval('public.images_id_seq', 1, false);
 
-ALTER TABLE ONLY public.images
-    ADD CONSTRAINT images_pkey PRIMARY KEY (id);
+CREATE TABLE public.chats
+(
+    id         bigint NOT NULL,
+    chat       text,
+    created_at timestamp(6) without time zone,
+    user_name  text,
+    chat_type  smallint,
+    primary key (id),
+    CONSTRAINT chats_chat_type_check CHECK (((chat_type >= 0) AND (chat_type <= 1)))
+);
+
+
+CREATE SEQUENCE public.chats_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.chats_id_seq OWNER TO postgres;
 
 GRANT CREATE ON DATABASE images TO javabot;

@@ -1,3 +1,13 @@
+# Discord chatbot based on Spring-AI
+
+This bot serves the purpose of trying out Spring-AI, it doesn't offer anything new compared to the thousands of other 
+LLM API wrappers out there. If you use your favorite online LLM chatbot only occasionally, this can be cheaper than the 
+monthly fee, as you only pay the provider for the actual usage of the API. If you use it heavily, it can be more 
+expensive. 
+
+The bot supports the `OpenAI` API and `Anthropic Claude` API for chat and `Dall-e` for image generation. It supports non-persisted 
+in memory storage, or postgres or mongodb for local storage. 
+
 ## Get your OpenAI API Key
 
 Go to https://platform.openai.com/ and select `API`. You will need to create an account for that. Create an 
@@ -5,7 +15,13 @@ organization, and set up billing. Set up `usage limits` in case you make a mista
 you end up with a large surprise bill. With a few dozen calls per day, the cost is in the order of a few dollars 
 per month. 
 
-Select `API Keys`. Generate a key. Place this in your environment variables or `.env` under the key `OPENAI_API_KEY`. 
+Select `API Keys`. Generate a key. Place this in your environment variables under the key `OPENAI_API_KEY`. 
+
+## get your Anthropic API key
+
+Go to https://console.anthropic.com/settings/keys and select `Create Key`. Select copy key and save that to your 
+environment variables under the name `ANTHROPIC_KEY`. You will need to create an account for that and set up billing. 
+Don't forget to set `Limits > Spend Limits` or you will end up with a very large surprise bill if your key leaks. 
 
 ## Create the Discord Bot
 
@@ -18,7 +34,7 @@ a name and click `Create`
 Go to the `Bot` section. You can give the bot a name, that will be its username in the Discord channel. 
 here you can select the `permissions` and `intents` the bot has. It will need Message Content Intent.  
 
-On this page you will find the `token`. Copy this down in your environment variables or your `.env` under the key 
+On this page you will find the `token`. Copy this down in your environment variables under the key 
 `DISCORD_TOKEN`. You won't be able to view or edit this token, if you lose it you have to generate a new one. 
 
 ## Invite the bot to your discord server
@@ -40,7 +56,8 @@ This is not persisted between restarts. `/temp` sets the `temperature`, in a ran
 this number, the more random, or creative the response becomes. Above a certain temperature, the output becomes 
 nonsense. `/tokens` sets the maximum number of tokens of the response. What tokens are is a bit fuzzy, it's more 
 than letters but less than words. The maximum is 4096 at this time. Shorter responses are faster. `/forget` clears the 
-conversation history of a user. 
+conversation history of a user. The `/history` command shows the last 10 images generated for the user, 
+and `/history` followed by a number will re-post the image. 
 
 Examples:
 ```
@@ -51,6 +68,37 @@ Examples:
 /role an extremely pendantic English professor who can't stop talking about anime
 
 /prompt summarize the conversation so far but in Korean
+
+/history 4
+```
+
+In direct messages, the /prompt command isn't necessary. The bot can remember conversations on a per-user basis: 
+
+```
+Rick - Hi how is it going?
+
+Bot - Hi! I'm here and ready to help. How can I assist you today?
+
+/image a healthy nutritious breakfast
+
+Rick - what's your opinion on the importance of a healthy nutritious breakfast ?
+
+Bot - A healthy, nutritious breakfast is crucial for several reasons. It kick-starts your 
+      metabolism, helping you burn calories throughout the day. Consuming a balanced 
+      breakfast can improve concentration and performance, particularly in school 
+      or work settings. It provides essential nutrients that might be harder to 
+      obtain later in the day. Additionally, having a nutritious breakfast can 
+      help in maintaining a healthy weight by reducing hunger and preventing 
+      unhealthy snacking later on. Overall, it sets a positive tone for making 
+      healthy choices throughout the day.
+      
+Rick - describe the conversation so far
+
+Bot - The conversation began with a greeting, followed by a request to generate 
+      an image of a healthy, nutritious breakfast. I then described the 
+      components of such a breakfast visually. Next, you asked for my perspective 
+      on the importance of a healthy, nutritious breakfast, and I provided 
+      several reasons why it's beneficial for health and well-being.
 ```
 
 ## Abuse
@@ -69,38 +117,49 @@ our safety system. Your prompt may contain text that is not allowed by our safet
 
 ## Development
 
-GraalVM build: 
+The bot supports the OpenAI and Anthropic Claude APIs for chat and Dall-e for image generation. For local storage 
+the bot supports Postgres and MongoDB and the in-memory database H2. These will have to be configured by setting the 
+environment variables:
 
-Gathering reflection information:
 ```
-mvn clean package 
-java -agentlib:native-image-agent=config-output-dir=. -jar target/SpringBot-1.0-SNAPSHOT.jar
-```
-Run the bot for a while and test all the features, then exit. 
+export DISCORD_TOKEN=your_discord_key_here
+export OPENAI_KEY=your_open_ai_api_key_here
+export ANTHROPIC_KEY=your_anthropic_api_key_here
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
+export POSTGRES_DB=postgres
+export SPRING_PROFILES_ACTIVE=openai,h2,dalle
 
-update `proxy-cofig.json` and `reflect-config.json` with the files generated in the previous step. 
 
-Build the native image:
-```
-mvn package -Pnative
-./target/javabot
 ```
 
 ### Docker 
 
-Use the spring boot native-maven-plugin:
+Build the image: 
 ```
-mvn spring-boot:build-image -Pnative
+mvn spring-boot:build-image
+
+export SPRING_PROFILES_ACTIVE=openai,h2,dalle 
+
+docker compose up kotlinbot
 ```
 
-### Choose local database 
+For persisted storage, replace h2 with postgres or mongo, and start the corresponding containers
 
-Postgres
 ```
-   mvn clean spring-boot:run -Ppostgres 
+export SPRING_PROFILES_ACTIVE=anthropic,postgres,dalle
+docker compose up postgres kotlinbot
 ```
 
-MongoDB
+To run it without docker use spring-boot:run. There are 3 maven profiles defined: `h2, postgres, mongo`, 
+all use openai and dall-e. 
+
 ```
-   mvn clean spring-boot:run -Pmongo 
+mvn spring-boot:run -Ph2
 ```
+
+## TODO
+
+- Upload and analyze images
+- Upload documents and answer questions about the content 
+- Become sentient and take over the world

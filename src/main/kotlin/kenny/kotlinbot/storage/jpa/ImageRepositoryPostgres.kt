@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
-@Profile("postgres")
+@Profile("postgres", "h2")
 @Repository
 interface ImageRepositoryPostgres : JpaRepository<Image, Long> {
     fun findTop10ByUserNameOrderByCreatedAtDesc(userName: String): List<ImageProjection>

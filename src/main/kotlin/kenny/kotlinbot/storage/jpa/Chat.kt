@@ -10,9 +10,9 @@ import java.time.LocalDateTime
 class Chat() {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "images_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chats_id_seq")
     @SequenceGenerator(
-        name = "images_id_seq", sequenceName = "public.images_id_seq", allocationSize = 1
+        name = "chats_id_seq", sequenceName = "public.chats_id_seq", allocationSize = 1
     )
     var id: Long? = null
 

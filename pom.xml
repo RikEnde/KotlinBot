@@ -176,6 +176,12 @@
             </properties>
         </profile>
         <profile>
+            <id>h2</id>
+            <properties>
+                <spring.profiles.active>h2,openai,dalle</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
             <id>postgres</id>
             <properties>
                 <spring.profiles.active>postgres,openai,dalle</spring.profiles.active>
