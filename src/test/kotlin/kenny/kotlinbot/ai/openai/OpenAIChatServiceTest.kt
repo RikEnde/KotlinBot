@@ -2,14 +2,13 @@ package kenny.kotlinbot.ai.openai
 
 import kenny.kotlinbot.ai.ChatProperties
 import kenny.kotlinbot.storage.ChatStorageService
-import kenny.kotlinbot.storage.ChatType
+import kenny.kotlinbot.storage.ChatType.BOT
+import kenny.kotlinbot.storage.ChatType.USER
 import kenny.kotlinbot.storage.StoredChat
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.UserMessage
 import org.springframework.ai.chat.model.ChatResponse
@@ -21,7 +20,7 @@ import kotlin.test.Test
 
 class OpenAIChatServiceTest {
     private val chatModel: OpenAiChatModel = mock()
-    private val chatStorageService: ChatStorageService = mock()
+    private val chatStorage: ChatStorageService = mock()
     private lateinit var chatService: OpenAIChatService
 
     private val chatOptions = OpenAiChatOptions().apply {
@@ -36,7 +35,45 @@ class OpenAIChatServiceTest {
 
     @BeforeEach
     fun setUp() {
-        chatService = OpenAIChatService(chatOptions, chatModel, properties, chatStorageService)
+        chatService = OpenAIChatService(chatOptions, chatModel, properties, chatStorage)
+    }
+
+    @Test
+    fun `maps spring AI Messages to stored chats`() {
+        val messages = listOf(UserMessage("Hello, AI!"),
+            AssistantMessage("Hello, User!")
+        )
+        val userName = "testUser"
+
+        val storedChats = messages.map {
+            chatService.map(it, userName)
+        }
+
+        assertEquals(userName, storedChats[0].userName)
+        assertEquals(userName, storedChats[1].userName)
+        assertEquals(USER, storedChats[0].type)
+        assertEquals(BOT, storedChats[1].type)
+        assertEquals("Hello, AI!", storedChats[0].chat)
+        assertEquals("Hello, User!", storedChats[1].chat)
+    }
+
+    @Test
+    fun `maps spring stored chats to AI Messages`() {
+        val userName = "testUser"
+        val storedChats = listOf(
+            StoredChat(userName, USER, "Hello, AI!"),
+            StoredChat(userName, BOT, "Hello, User!")
+        )
+
+        whenever(chatStorage.getUserChats(eq(userName)))
+            .thenReturn(storedChats)
+
+        val messages = chatService.userChats(userName)
+        assertThat(messages).hasSize(2)
+        assertThat(messages[0]).isInstanceOf(UserMessage::class.java)
+        assertThat(messages[0].content).isEqualTo("Hello, AI!")
+        assertThat(messages[1]).isInstanceOf(AssistantMessage::class.java)
+        assertThat(messages[1].content).isEqualTo("Hello, User!")
     }
 
     @Test
@@ -47,10 +84,10 @@ class OpenAIChatServiceTest {
         val chatResponse = ChatResponse(listOf(Generation(AssistantMessage(responseContent))))
 
         whenever(chatModel.call(any<Prompt>())).thenReturn(chatResponse)
-        whenever(chatStorageService.getUserChats(userName))
+        whenever(chatStorage.getUserChats(userName))
             .thenReturn(listOf(
-                StoredChat(userName, ChatType.USER, prompt),
-                StoredChat(userName, ChatType.BOT, responseContent))
+                StoredChat(userName, USER, prompt),
+                StoredChat(userName, BOT, responseContent))
             )
 
         val response = chatService.chat(prompt, userName)
@@ -61,6 +98,23 @@ class OpenAIChatServiceTest {
 
         assertThat(chats[0]).matches { it is UserMessage && it.content == prompt }
         assertThat(chats[1]).matches { it is AssistantMessage && it.content == responseContent }
+    }
+
+    @Test
+    fun `imageChat should save user and assistant messages to storage`() {
+        val userName = "testUser"
+        val prompt = "a test user testing"
+        val revisedPrompt = "a needlessly florid description of a user toiling in the test mines"
+
+        chatService.imageChat(userName, prompt, revisedPrompt)
+
+        verify(chatStorage, times(1)).saveUserChats(argThat { chats ->
+            chats.size == 2 &&
+                    chats[0].chat == "generate the following image: $prompt" &&
+                    chats[0].type == USER &&
+                    chats[1].chat == "generated the following image: $revisedPrompt" &&
+                    chats[1].type == BOT
+        })
     }
 
     @Test
@@ -113,12 +167,12 @@ class OpenAIChatServiceTest {
         val chatResponse = ChatResponse(listOf(Generation(AssistantMessage(responseContent))))
 
         whenever(chatModel.call(any<Prompt>())).thenReturn(chatResponse)
-        whenever(chatStorageService.getUserChats(userName))
+        whenever(chatStorage.getUserChats(userName))
             .thenReturn(listOf(
-                StoredChat(userName, ChatType.USER, prompt),
-                StoredChat(userName, ChatType.BOT, responseContent))
+                StoredChat(userName, USER, prompt),
+                StoredChat(userName, BOT, responseContent))
             )
-        whenever(chatStorageService.removeUserChats(userName)).thenReturn(2)
+        whenever(chatStorage.removeUserChats(userName)).thenReturn(2)
 
         chatService.chat(prompt, userName)
         assertThat(chatService.userChats(userName)).hasSize(2)

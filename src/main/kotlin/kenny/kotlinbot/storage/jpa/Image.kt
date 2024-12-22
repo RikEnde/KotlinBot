@@ -2,7 +2,6 @@ package kenny.kotlinbot.storage.jpa
 
 import jakarta.persistence.*
 import java.time.LocalDateTime
-import java.util.*
 
 @Entity
 @Table(name = "images", schema = "public")
@@ -52,23 +51,5 @@ class Image() : ImageProjection {
         this.prompt = prompt
         this.revisedPrompt = revisedPrompt
         this.createdAt = createdAt
-    }
-
-    override fun toString(): String {
-        return "Image(id=$id, imageData=${Arrays.toString(imageData)}, fileName=$fileName, userName=$userName, discordUrl=$discordUrl, prompt=$prompt, revisedPrompt=$revisedPrompt, createdAt=$createdAt)"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Image) return false
-
-        // If the ID is null, the entities are not persisted yet, so they are not equal
-        if (id == null || other.id == null) return false
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
     }
 }

@@ -2,7 +2,7 @@ package kenny.kotlinbot.ai.openai
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.mockito.Mockito.mock
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import org.springframework.ai.image.Image
@@ -47,6 +47,5 @@ class DallEImageServiceTest {
         assertThat(imageResult.prompt).isEqualTo(prompt)
         assertThat(imageResult.revisedPrompt).isEqualTo(revisedPrompt)
     }
-
 
 }

@@ -4,8 +4,6 @@ import kenny.kotlinbot.storage.ChatStorageService
 import kenny.kotlinbot.storage.ChatType.BOT
 import kenny.kotlinbot.storage.ChatType.USER
 import kenny.kotlinbot.storage.StoredChat
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.UserMessage
@@ -15,31 +13,25 @@ import org.springframework.ai.chat.prompt.ChatOptions
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
 
-
 abstract class BaseChatService(
     val chatOptions: ChatOptions,
     open val chatModel: ChatModel,
     open val properties: ChatProperties,
     open val chatStorage: ChatStorageService
 ) : ChatService {
-    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-
     private var systemMessage: Message? = null
 
     fun map(message: Message, userName: String): StoredChat {
         return StoredChat(
-            userName,
-            when (message) {
+            userName, when (message) {
                 is UserMessage -> USER
                 is AssistantMessage -> BOT
                 else -> throw IllegalArgumentException("Unknown message type")
-            },
-            message.content
+            }, message.content
         )
     }
 
-    fun userChats(userName: String): List<Message> = chatStorage.getUserChats(userName)
-        .map { storedChat ->
+    fun userChats(userName: String): List<Message> = chatStorage.getUserChats(userName).map { storedChat ->
             when (storedChat.type) {
                 USER -> UserMessage(storedChat.chat)
                 BOT -> AssistantMessage(storedChat.chat)
@@ -82,8 +74,7 @@ abstract class BaseChatService(
         return response?.result?.output?.content ?: "No response from OpenAI API."
     }
 
-    override fun randomRole(): String =
-        chatModel.call("Choose a random role for an AI chatbot in one paragraph")
+    override fun randomRole(): String = chatModel.call("Choose a random role for an AI chatbot in one paragraph")
 
     override fun role(role: String?): String {
         var prompt: String? = role
