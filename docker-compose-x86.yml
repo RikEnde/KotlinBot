@@ -1,0 +1,47 @@
+services:
+  kotlinbot:
+    build:
+      context: .
+      dockerfile: Dockerfile-x86
+#    ports:
+#      - "8080:8080"
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - OPENAI_KEY=${OPENAI_KEY}
+      - ANTHROPIC_KEY=${ANTHROPIC_KEY}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    network_mode: host
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+        - db_network
+
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: images
+    labels:
+      - "org.springframework.boot.service-connection=postgres"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
