@@ -27,7 +27,7 @@ abstract class BaseChatService(
                 is UserMessage -> USER
                 is AssistantMessage -> BOT
                 else -> throw IllegalArgumentException("Unknown message type")
-            }, message.content
+            }, message.text ?: ""
         )
     }
 
@@ -66,12 +66,12 @@ abstract class BaseChatService(
             chatModel.call(Prompt(userChats(userName) + userMessage + systemMessage(), chatOptions))
 
         response?.let {
-            val chats = listOf(userMessage, AssistantMessage(it.result.output.content))
+            val chats = listOf(userMessage, AssistantMessage(it.result.output.text ?: "No response from OpenAI API."))
                 .map { map(it, userName) }
             chatStorage.saveUserChats(chats)
         }
 
-        return response?.result?.output?.content ?: "No response from OpenAI API."
+        return response?.result?.output?.text ?: "No response from OpenAI API."
     }
 
     override fun randomRole(): String = chatModel.call("Choose a random role for an AI chatbot in one paragraph")

@@ -1,8 +1,8 @@
 package kenny.kotlinbot.ai.openai
 
-import org.springframework.ai.autoconfigure.openai.OpenAiChatProperties
-import org.springframework.ai.autoconfigure.openai.OpenAiImageProperties
 import org.springframework.ai.image.ImageOptions
+import org.springframework.ai.model.openai.autoconfigure.OpenAiChatProperties
+import org.springframework.ai.model.openai.autoconfigure.OpenAiImageProperties
 import org.springframework.ai.openai.OpenAiChatOptions
 import org.springframework.ai.openai.OpenAiImageOptions
 import org.springframework.boot.web.client.ClientHttpRequestFactories
@@ -20,24 +20,24 @@ class OpenAIConfig {
     fun openAiChatOptions(chatProperties: OpenAiChatProperties): OpenAiChatOptions {
         val defaultOptions = chatProperties.options
         return OpenAiChatOptions.builder()
-            .withModel(defaultOptions.model)
-            .withTemperature(defaultOptions.temperature)
-            .withMaxTokens(defaultOptions.maxTokens)
-            .withTopP(defaultOptions.topP)
-            .withFrequencyPenalty(defaultOptions.frequencyPenalty)
-            .withPresencePenalty(defaultOptions.presencePenalty)
-            .withStop(defaultOptions.stop)
+            .model(defaultOptions.model)
+            .temperature(defaultOptions.temperature)
+            .maxTokens(defaultOptions.maxTokens)
+            .topP(defaultOptions.topP)
+            .frequencyPenalty(defaultOptions.frequencyPenalty)
+            .presencePenalty(defaultOptions.presencePenalty)
+            .stop(defaultOptions.stop)
             .build()
     }
 
     @Bean
     fun dalleImageOptions(imageProperties: OpenAiImageProperties): ImageOptions {
         return OpenAiImageOptions.builder()
-            .withHeight(imageProperties.options.height)
-            .withWidth(imageProperties.options.width)
-            .withN(imageProperties.options.n)
-            .withQuality(imageProperties.options.quality)
-            .withModel(imageProperties.options.model)
+            .height(imageProperties.options.height)
+            .width(imageProperties.options.width)
+            .N(imageProperties.options.n)
+            .quality(imageProperties.options.quality)
+            .model(imageProperties.options.model)
             .build()
     }
 

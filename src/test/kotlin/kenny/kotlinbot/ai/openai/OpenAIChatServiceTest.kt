@@ -71,9 +71,9 @@ class OpenAIChatServiceTest {
         val messages = chatService.userChats(userName)
         assertThat(messages).hasSize(2)
         assertThat(messages[0]).isInstanceOf(UserMessage::class.java)
-        assertThat(messages[0].content).isEqualTo("Hello, AI!")
+        assertThat(messages[0].text).isEqualTo("Hello, AI!")
         assertThat(messages[1]).isInstanceOf(AssistantMessage::class.java)
-        assertThat(messages[1].content).isEqualTo("Hello, User!")
+        assertThat(messages[1].text).isEqualTo("Hello, User!")
     }
 
     @Test
@@ -96,8 +96,8 @@ class OpenAIChatServiceTest {
         val chats = chatService.userChats(userName)
         assertThat(chats).hasSize(2)
 
-        assertThat(chats[0]).matches { it is UserMessage && it.content == prompt }
-        assertThat(chats[1]).matches { it is AssistantMessage && it.content == responseContent }
+        assertThat(chats[0]).matches { it is UserMessage && it.text == prompt }
+        assertThat(chats[1]).matches { it is AssistantMessage && it.text == responseContent }
     }
 
     @Test
@@ -135,7 +135,7 @@ class OpenAIChatServiceTest {
         val role = "ChatBot"
         val response = chatService.role(role)
         assertThat(response).isEqualTo("Role is now ChatBot")
-        assertThat(chatService.systemMessage().content).isEqualTo("Your unit testing role is ChatBot.")
+        assertThat(chatService.systemMessage().text).isEqualTo("Your unit testing role is ChatBot.")
     }
 
     @Test
@@ -156,7 +156,7 @@ class OpenAIChatServiceTest {
         val response = chatService.role(null)
 
         assertThat(response).isEqualTo("Role is now Random role chosen by AI")
-        assertThat(chatService.systemMessage().content).isEqualTo("Your unit testing role is Random role chosen by AI.")
+        assertThat(chatService.systemMessage().text).isEqualTo("Your unit testing role is Random role chosen by AI.")
     }
 
     @Test
