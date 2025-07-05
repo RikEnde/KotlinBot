@@ -14,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.ai.retry.NonTransientAiException
 import org.springframework.stereotype.Component
+import java.time.ZoneOffset
 
 @Component
 class DiscordEventListener(
@@ -102,8 +103,34 @@ class DiscordEventListener(
             "temp" -> temperature(event.getOption("temp")?.asDouble ?: 0.7)
             "tokens" -> tokens(event.getOption("tokens")?.asInt ?: 4069)
             "history" -> history(event.getOption("n")?.asInt ?: 0, userName, channel)
+            "models" -> models(event.getOption("model")?.asString ?: "", userName, channel)
             else -> "????"
         }
+    }
+
+    fun models(
+        model: String,
+        userName: String,
+        channel: MessageChannelUnion
+    ): String {
+        val models = chatService.listModels()
+
+        return if (model.isNotEmpty()) {
+            changeModel(model, userName, channel)
+        } else return models.withIndex().joinToString("\n") { (index, m) ->
+            val date = m.created.atZone(ZoneOffset.UTC).toLocalDate()  // yyyy-MM-dd
+            "${index + 1}\t${m.id}\t$date"
+        }
+    }
+
+    private fun changeModel(
+        model: String,
+        userName: String,
+        channel: MessageChannelUnion
+    ): String {
+        val activeModel = chatService.selectModel(model, userName)
+        channel.sendMessage("Changed model to $activeModel").queue()
+        return activeModel
     }
 
     fun summarize(userName: String): String =

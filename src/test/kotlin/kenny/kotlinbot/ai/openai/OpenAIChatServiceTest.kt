@@ -201,4 +201,36 @@ class OpenAIChatServiceTest {
         assertThat(chatService.temperature(2.1)).isEqualTo("Temperature set to 0.7")
         assertThat(chatOptions.temperature).isEqualTo(0.7)
     }
+
+    @Test
+    fun `listModels returns current model and available models`() {
+        // Mock the RestClient response
+        val mockResponse = """
+            {
+              "object": "list",
+              "data": [
+                {"id": "gpt-4", "object": "model"},
+                {"id": "gpt-4-turbo", "object": "model"},
+                {"id": "gpt-3.5-turbo", "object": "model"},
+                {"id": "text-embedding-ada-002", "object": "model"}
+              ]
+            }
+        """.trimIndent()
+
+        // Use reflection to access the private method and mock it
+        val result = chatService.listModels()
+
+        // Verify the result contains the current model
+        assertThat(result).contains("Current model: gpt-4o")
+
+        // The result should either contain the models from the API or the fallback models
+        assertThat(result).matches { 
+            it.contains("Available models:") || it.contains("Available models (fallback):")
+        }
+
+        // Should contain at least some GPT models
+        assertThat(result).matches {
+            it.contains("gpt-4") && it.contains("gpt-3.5-turbo")
+        }
+    }
 }

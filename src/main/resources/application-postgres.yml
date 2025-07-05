@@ -8,8 +8,8 @@ spring:
       ddl-auto: update
   datasource:
     url: jdbc:postgresql://localhost:5432/images
-    username: postgres
-    password: postgres
+    username: admin
+    password: admin_password
 #  ai:
 #    vectorstore:
 #      pgvector:

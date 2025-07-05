@@ -33,8 +33,12 @@ class DiscordConfig {
                 Commands.slash("summary", "Summarize the user's conversation so far"),
 
                 Commands.slash("forget", "Forget the user's conversation so far"),
+
                 Commands.slash("history", "List the user's stored images")
-                    .addOption(OptionType.INTEGER, "n", "History line number", false)
+                    .addOption(OptionType.INTEGER, "n", "History line number", false),
+
+                Commands.slash("models", "List the models available in the active API")
+                    .addOption(OptionType.STRING, "model", "Model name", false)
             )
         commands.queue()
         return commands
